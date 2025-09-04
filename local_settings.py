@@ -24,8 +24,8 @@ APP_SETTINGS = LocalSettingsClass(
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'db_name',
-        'USER': 'db_owner',
+        'NAME': 'is_demo',
+        'USER': 'ise_demo',
         'PASSWORD': 'password',
         'HOST': 'localhost',
     },
