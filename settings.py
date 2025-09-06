@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'integration_utils.bitrix24',
     'integration_utils.its_utils.app_gitpull',
+    'start',
     'main_app',
 ]
 
@@ -93,12 +94,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Логгер для integration_utils
-from integration_utils.iu_logger.classes.mute_logger import MuteLogger
-ilogger = MuteLogger()
 
-# local settings
 try:
     from local_settings import *
 except ImportError:
@@ -107,3 +105,6 @@ except ImportError:
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+from integration_utils.iu_logger.classes.mute_logger import MuteLogger
+ilogger = MuteLogger()

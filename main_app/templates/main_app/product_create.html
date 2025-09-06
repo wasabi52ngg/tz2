@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Создание товара{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Создание товара</h1>
+                <a href="{% url 'main_app:product_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Назад к списку
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-plus"></i> Новый товар в Битрикс24
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">
+                                {{ form.name.label }}
+                            </label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.name.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label for="{{ form.price.id_for_label }}" class="form-label">
+                                        {{ form.price.label }}
+                                    </label>
+                                    {{ form.price }}
+                                    {% if form.price.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.price.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="{{ form.currency.id_for_label }}" class="form-label">
+                                        {{ form.currency.label }}
+                                    </label>
+                                    {{ form.currency }}
+                                    {% if form.currency.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.currency.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">
+                                {{ form.description.label }}
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.description.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+
+                        <!-- Поле для изображения -->
+                        <div class="mb-3">
+                            <label for="{{ form.detail_image.id_for_label }}" class="form-label">
+                                {{ form.detail_image.label }}
+                            </label>
+                            {{ form.detail_image }}
+                            {% if form.detail_image.help_text %}
+                                <div class="form-text">{{ form.detail_image.help_text }}</div>
+                            {% endif %}
+                            {% if form.detail_image.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.detail_image.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'main_app:product_list' %}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times"></i> Отмена
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Создать товар
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Информация -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-info-circle"></i> Информация
+                    </h6>
+                    <p class="card-text small text-muted">
+                        Товар будет создан в Битрикс24 через API метод <code>crm.product.add</code>. 
+                        После создания товар автоматически появится в списке товаров и будет доступен для создания QR-кодов.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

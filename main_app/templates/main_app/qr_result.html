@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% block title %}QR-код создан{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>QR-код успешно создан</h1>
+                <a href="{% url 'main_app:qr_generate' %}" class="btn btn-warning">
+                    <i class="fas fa-plus"></i> Создать еще один
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- QR-код -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-qrcode"></i> Ваш QR-код
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if qr_link.qr_code_image %}
+                        <img src="{{ qr_link.qr_code_image.url }}" alt="QR-код" class="img-fluid mb-3" style="max-width: 300px;">
+                    {% else %}
+                        <div class="bg-light p-5 mb-3">
+                            <i class="fas fa-qrcode fa-3x text-muted"></i>
+                            <p class="text-muted mt-2">QR-код не найден</p>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{{ qr_url }}" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt"></i> Открыть ссылку
+                        </a>
+                        {% if qr_link.qr_code_image %}
+                        <a href="{{ qr_link.qr_code_image.url }}" download class="btn btn-success">
+                            <i class="fas fa-download"></i> Скачать QR-код
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о товаре -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-box"></i> Информация о товаре
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6>{{ qr_link.product.name }}</h6>
+                    <p class="text-muted small mb-2">
+                        ID в Битрикс: {{ qr_link.product.bitrix_id }}
+                    </p>
+                    
+                    {% if qr_link.product.description %}
+                    <p class="mb-3">{{ qr_link.product.description }}</p>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="h5 text-success mb-0">
+                            {{ qr_link.product.price }} {{ qr_link.product.currency }}
+                        </span>
+                        <span class="badge bg-secondary">{{ qr_link.product.sort_order }}</span>
+                    </div>
+
+                    {% if qr_link.product.photo_url %}
+                    <div class="mb-3">
+                        <img src="{{ qr_link.product.photo_url }}" alt="{{ qr_link.product.name }}" class="img-fluid rounded" style="max-height: 150px;">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Информация о ссылке -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-link"></i> Информация о ссылке
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <small class="text-muted">Создана:</small><br>
+                            <strong>{{ qr_link.created_at|date:"d.m.Y H:i" }}</strong>
+                        </div>
+                    </div>
+                    
+                    {% if qr_link.expires_at %}
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <small class="text-muted">Срок действия:</small><br>
+                            <strong>{{ qr_link.expires_at|date:"d.m.Y H:i" }}</strong>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <small class="text-muted">Ссылка:</small><br>
+                            <code class="small">{{ qr_url }}</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Действия -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-tools"></i> Действия
+                    </h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{% url 'main_app:qr_generate' %}" class="btn btn-warning">
+                            <i class="fas fa-qrcode"></i> Создать новый QR-код
+                        </a>
+                        <a href="{% url 'main_app:qr_list' %}" class="btn btn-info">
+                            <i class="fas fa-history"></i> История QR-кодов
+                        </a>
+                        <a href="{% url 'main_app:product_list' %}" class="btn btn-primary">
+                            <i class="fas fa-list"></i> Список товаров
+                        </a>
+                        <a href="{% url 'main_app:index' %}" class="btn btn-secondary">
+                            <i class="fas fa-home"></i> Главная
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Инструкция -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-info-circle"></i> Как использовать
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <div class="mb-2">
+                                    <i class="fas fa-mobile-alt fa-2x text-primary"></i>
+                                </div>
+                                <h6>1. Сканируйте QR-код</h6>
+                                <p class="small text-muted">
+                                    Используйте камеру телефона или приложение для сканирования QR-кодов
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <div class="mb-2">
+                                    <i class="fas fa-external-link-alt fa-2x text-success"></i>
+                                </div>
+                                <h6>2. Перейдите по ссылке</h6>
+                                <p class="small text-muted">
+                                    Откроется страница с информацией о товаре
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <div class="mb-2">
+                                    <i class="fas fa-eye fa-2x text-info"></i>
+                                </div>
+                                <h6>3. Просмотрите товар</h6>
+                                <p class="small text-muted">
+                                    Любой может увидеть информацию о товаре без авторизации
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

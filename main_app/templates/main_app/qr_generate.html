@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}Генерация QR-кода{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Генерация QR-кода</h1>
+                <a href="{% url 'main_app:qr_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> История QR-кодов
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-qrcode"></i> Создать QR-код для товара
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.product.id_for_label }}" class="form-label">
+                                {{ form.product.label }}
+                            </label>
+                            {{ form.product }}
+                            {% if form.product.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.product.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Выберите товар для которого нужно создать QR-код
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.expires_in_days.id_for_label }}" class="form-label">
+                                {{ form.expires_in_days.label }}
+                            </label>
+                            {{ form.expires_in_days }}
+                            {% if form.expires_in_days.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.expires_in_days.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                {{ form.expires_in_days.help_text }}
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'main_app:product_list' %}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times"></i> Отмена
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-qrcode"></i> Создать QR-код
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Информация о безопасности -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-shield-alt"></i> Безопасность
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-success">
+                                <i class="fas fa-check"></i> Подписанные ссылки
+                            </h6>
+                            <p class="small text-muted">
+                                Каждая ссылка содержит криптографическую подпись, 
+                                что делает невозможным подделку без секретного ключа.
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-info">
+                                <i class="fas fa-clock"></i> Срок действия
+                            </h6>
+                            <p class="small text-muted">
+                                Ссылки имеют ограниченный срок действия, 
+                                что повышает безопасность системы.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Как это работает -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-info-circle"></i> Как это работает
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <div class="mb-2">
+                                    <i class="fas fa-key fa-2x text-warning"></i>
+                                </div>
+                                <h6>1. Создание токена</h6>
+                                <p class="small text-muted">
+                                    Система создает подписанный токен с данными товара
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <div class="mb-2">
+                                    <i class="fas fa-link fa-2x text-primary"></i>
+                                </div>
+                                <h6>2. Генерация ссылки</h6>
+                                <p class="small text-muted">
+                                    Создается безопасная ссылка на localhost с токеном
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <div class="mb-2">
+                                    <i class="fas fa-qrcode fa-2x text-success"></i>
+                                </div>
+                                <h6>3. QR-код</h6>
+                                <p class="small text-muted">
+                                    Генерируется QR-код с безопасной ссылкой
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

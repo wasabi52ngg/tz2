@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .text-success {
+            color: #198754 !important;
+        }
+        .text-primary {
+            color: #0d6efd !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <!-- Товар -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Фото товара -->
+                            <div class="col-md-5">
+                                {% if product.detail_image %}
+                                    <img src="{{ product.detail_image.url }}" alt="{{ product.name }}" class="img-fluid rounded shadow">
+                                {% elif product.photo_url %}
+                                    <img src="{{ product.photo_url }}" alt="{{ product.name }}" class="img-fluid rounded shadow">
+                                {% else %}
+                                    <div class="bg-light rounded shadow d-flex align-items-center justify-content-center" style="height: 300px;">
+                                        <div class="text-center">
+                                            <i class="fas fa-image fa-3x text-muted mb-3"></i>
+                                            <p class="text-muted">Фото товара отсутствует</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Информация о товаре -->
+                            <div class="col-md-7">
+                                <h1 class="h2 mb-3">{{ product.name }}</h1>
+
+                                {% if product.description %}
+                                <div class="mb-4">
+                                    <h5>Описание</h5>
+                                    <p class="text-muted">{{ product.description|linebreaks }}</p>
+                                </div>
+                                {% endif %}
+
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div>
+                                        <h3 class="text-success mb-0">{{ product.price }} {{ product.currency }}</h3>
+                                        <small class="text-muted">Цена товара</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
