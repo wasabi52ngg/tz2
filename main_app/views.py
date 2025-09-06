@@ -6,14 +6,11 @@ from django.utils.decorators import method_decorator
 from django.views.generic import View
 from django.core.paginator import Paginator
 from integration_utils.bitrix24.bitrix_user_auth.main_auth import main_auth
-from django.conf import settings
-import json
 
 from .models import Product, QRCodeLink
 from .forms import ProductSearchForm, ProductCreateForm, QRCodeGenerateForm
 from .utils.signer import signer
 from .utils.qr_generator import create_qr_code_file, generate_product_qr_url
-from .utils.bitrix_api import get_bitrix_api
 
 
 @main_auth(on_cookies=True)
@@ -41,7 +38,6 @@ def product_list(request):
         elif search_type == 'name':
             products = products.filter(name__icontains=search_query)
     
-    # Пагинация
     paginator = Paginator(products.order_by('sort_order', 'name'), 20)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -63,7 +59,6 @@ def product_create(request):
             try:
                 bitrix_id = form.save_to_bitrix(request.bitrix_user_token)
                 
-                # Создаем товар в локальной базе данных
                 from .models import Product
                 product, created = Product.objects.get_or_create(
                     bitrix_id=bitrix_id,
@@ -72,11 +67,10 @@ def product_create(request):
                         'price': form.cleaned_data['price'],
                         'currency': form.cleaned_data['currency'],
                         'description': form.cleaned_data.get('description', ''),
-                        'sort_order': 500,  # Значение по умолчанию
+                        'sort_order': 500,
                     }
                 )
                 
-                # Сохраняем изображение локально, если оно было загружено
                 if form.cleaned_data.get('detail_image'):
                     product.detail_image = form.cleaned_data['detail_image']
                     product.save()
@@ -104,16 +98,12 @@ def qr_generate(request):
             expires_in_days = form.cleaned_data['expires_in_days']
             
             try:
-                # Создаем подписанный токен
                 token = signer.create_product_token(product.id, expires_in_days)
                 
-                # Генерируем URL для QR-кода
                 qr_url = generate_product_qr_url(token)
                 
-                # Создаем QR-код
                 qr_file = create_qr_code_file(qr_url)
                 
-                # Сохраняем QR-ссылку в базе
                 qr_link = QRCodeLink.objects.create(
                     product=product,
                     signed_token=token,
@@ -140,7 +130,6 @@ def qr_result(request, qr_link_id):
     """Результат генерации QR-кода"""
     qr_link = get_object_or_404(QRCodeLink, id=qr_link_id)
     
-    # Генерируем URL для отображения
     qr_url = generate_product_qr_url(qr_link.signed_token)
     
     context = {
@@ -155,7 +144,6 @@ def qr_list(request):
     """Список сгенерированных QR-кодов"""
     qr_links = QRCodeLink.objects.select_related('product').order_by('-created_at')
     
-    # Пагинация
     paginator = Paginator(qr_links, 20)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -169,18 +157,15 @@ def qr_list(request):
 
 def product_view_by_token(request, token):
     """Публичная страница товара по токену (без авторизации)"""
-    # Проверяем токен
     product_id = signer.verify_product_token(token)
     if not product_id:
         raise Http404("Неверная или истекшая ссылка")
     
-    # Получаем товар
     try:
         product = Product.objects.get(id=product_id, is_active=True)
     except Product.DoesNotExist:
         raise Http404("Товар не найден")
     
-    # Получаем QR-ссылку для статистики
     try:
         qr_link = QRCodeLink.objects.get(signed_token=token, is_active=True)
         qr_link.increment_access()

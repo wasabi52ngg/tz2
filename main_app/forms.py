@@ -4,7 +4,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Product
-from .utils.bitrix_api import get_bitrix_api, BitrixProductService
+from .utils.bitrix_api import BitrixProductService
 
 
 class ProductSearchForm(forms.Form):
@@ -113,7 +113,7 @@ class ProductCreateForm(forms.Form):
                 price=float(self.cleaned_data['price']),
                 currency=self.cleaned_data['currency'],
                 description=self.cleaned_data.get('description'),
-                sort=500,  # Значение по умолчанию
+                sort=500,
                 detail_image=self.cleaned_data.get('detail_image')
             )
             
@@ -139,7 +139,7 @@ class QRCodeGenerateForm(forms.Form):
     expires_in_days = forms.IntegerField(
         initial=365,
         min_value=1,
-        max_value=3650,  # 10 лет максимум
+        max_value=365,
         label='Срок действия ссылки (дни)',
         widget=forms.NumberInput(attrs={
             'class': 'form-control',
@@ -150,5 +150,4 @@ class QRCodeGenerateForm(forms.Form):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Обновляем queryset для выбора товаров
         self.fields['product'].queryset = Product.objects.filter(is_active=True).order_by('name')
