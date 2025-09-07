@@ -15,17 +15,6 @@ class BitrixProductService:
     def add_product(self, name, price, currency='RUB', description=None, sort=500, detail_image=None):
         """
         Добавить товар в Битрикс24
-        
-        Args:
-            name (str): Название товара
-            price (float): Цена товара
-            currency (str): Валюта (по умолчанию RUB)
-            description (str): Описание товара
-            sort (int): Порядок сортировки
-            detail_image: Файл изображения товара
-        
-        Returns:
-            dict: Результат создания товара
         """
         fields = {
             'NAME': name,
@@ -57,14 +46,6 @@ class BitrixProductService:
     def get_products(self, filter_params=None, select_fields=None, order=None):
         """
         Получить список товаров из Битрикс24
-        
-        Args:
-            filter_params (dict): Параметры фильтрации
-            select_fields (list): Поля для выборки
-            order (dict): Параметры сортировки
-        
-        Returns:
-            dict: Список товаров
         """
         params = {}
         
@@ -78,25 +59,11 @@ class BitrixProductService:
             params['order'] = order
         
         return self.user_token.call_api_method('crm.product.list', params)
-    
-    def get_product_fields(self):
-        """
-        Получить список полей товара
-        
-        Returns:
-            dict: Описание полей товара
-        """
-        return self.user_token.call_api_method('crm.product.fields')
+
     
     def sync_products_to_local(self, limit=50):
         """
         Синхронизировать товары из Битрикс24 в локальную базу
-        
-        Args:
-            limit (int): Максимальное количество товаров для синхронизации
-        
-        Returns:
-            tuple: (количество созданных, количество обновленных)
         """
         response = self.get_products(
             select_fields=['ID', 'NAME', 'DESCRIPTION', 'PRICE', 'CURRENCY_ID', 'SORT'],
