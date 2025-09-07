@@ -136,17 +136,6 @@ class QRCodeGenerateForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-control'})
     )
     
-    expires_in_days = forms.IntegerField(
-        initial=365,
-        min_value=1,
-        max_value=365,
-        label='Срок действия ссылки (дни)',
-        widget=forms.NumberInput(attrs={
-            'class': 'form-control',
-            'placeholder': '365'
-        }),
-        help_text='Ссылка будет действительна указанное количество дней'
-    )
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

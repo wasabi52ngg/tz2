@@ -95,10 +95,9 @@ def qr_generate(request):
         form = QRCodeGenerateForm(request.POST)
         if form.is_valid():
             product = form.cleaned_data['product']
-            expires_in_days = form.cleaned_data['expires_in_days']
             
             try:
-                token = signer.create_product_token(product.id, expires_in_days)
+                token = signer.create_product_token(product.id)
                 
                 qr_url = generate_product_qr_url(token)
                 
@@ -106,8 +105,7 @@ def qr_generate(request):
                 
                 qr_link = QRCodeLink.objects.create(
                     product=product,
-                    signed_token=token,
-                    expires_at=signer.unsign(token) and signer.unsign(token).get('expires_at')
+                    signed_token=token
                 )
                 qr_link.qr_code_image.save(f"qr_{product.bitrix_id}_{qr_link.id}.png", qr_file, save=True)
                 
@@ -132,9 +130,15 @@ def qr_result(request, qr_link_id):
     
     qr_url = generate_product_qr_url(qr_link.signed_token)
     
+    # Извлекаем только токен из ссылки для отображения
+    base_url = "http://localhost:8000"
+    token_part = qr_link.signed_token
+    display_url = f"{base_url}/product/{token_part}/"
+    
     context = {
         'qr_link': qr_link,
         'qr_url': qr_url,
+        'display_url': display_url,
     }
     return render(request, 'main_app/qr_result.html', context)
 
